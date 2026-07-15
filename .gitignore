@@ -1,0 +1,10 @@
+# 私密策略文件（playbook、人設、內容日曆）— 不上傳公開 repo
+.claude/
+
+# 可重新產生的套件
+_tools/node_modules/
+
+# 系統雜檔
+.DS_Store
+Thumbs.db
+desktop.ini

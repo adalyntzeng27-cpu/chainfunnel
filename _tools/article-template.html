@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-Hant">
+<!-- =========================================================================
+  文章範本 · chainfunnel
+  用法：
+   1. 複製這個檔案到某個欄目資料夾，改成有意義的英文檔名，例如：
+        pivot/why-i-pivot-to-crypto.html
+   2. 把下面所有【】的地方換成你的內容。
+   3. 到 _tools/build-pages.js 的 CATS 裡，把這篇加進對應欄目的 posts（見 README）。
+   4. `node _tools/build-pages.js` 重生欄目列表頁。
+
+  ⚠️ 路徑深度：這個範本假設文章放在「欄目資料夾底下一層」（如 pivot/xxx.html），
+     所以所有連結用 ../ 回到網站根。
+     若你放到更深一層（如 column/racing/xxx.html），要把所有 ../ 改成 ../../。
+========================================================================= -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>【文章標題】 · chainfunnel</title>
+<meta name="description" content="【給搜尋引擎看的一句話摘要，約 60～120 字，放關鍵字】">
+<link rel="icon" type="image/png" sizes="128x128" href="../assets/favicon-128.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<!-- ===== 頁首（不要動，除非改導覽——改導覽記得所有頁面一起改） ===== -->
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="../index.html" aria-label="chainfunnel 首頁"><img src="../assets/logo-mark.png" alt=""><b>chainfunnel</b></a>
+    <button class="burger" id="burger" aria-label="選單" aria-expanded="false">☰</button>
+    <nav class="nav" id="nav">
+      <a href="../decode/">幣圈拆解</a>
+      <a href="../exchange/">交易所指南</a>
+      <a href="../guide/">新手教學</a>
+      <a href="../column/">觀察專欄</a>
+      <a href="../pivot/">轉職幣圈</a>
+      <a href="../journal/">學習日誌</a>
+      <a href="../about.html">關於我</a>
+    </nav>
+    <span class="sp"></span>
+    <a class="btn-sub" href="#subscribe">訂閱</a>
+  </div>
+</header>
+
+<main>
+  <article class="article">
+    <!-- ===== 文章標頭 ===== -->
+    <div class="a-head">
+      <span class="a-chip">【欄目 · 分類標籤，例如 轉職幣圈】</span>
+      <h1 class="a-title">【文章標題】</h1>
+      <p class="a-dek">【副標／導言：一兩句話勾住讀者，說清楚這篇要講什麼、為什麼值得看】</p>
+      <div class="a-byline">
+        <span class="av">艾</span>
+        <div>
+          <b>艾德霖</b>
+          <div class="a-sub">2026.00.00 · 0 分鐘 · 觀點</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 內文：只用這些標籤，樣式會自動套 ===== -->
+    <div class="prose">
+      <p>【第一段。開頭就給鉤子或結論，別鋪陳太久。】</p>
+
+      <h2>【小標一】</h2>
+      <p>【段落。想強調就用 <strong>粗體</strong>，想連到別篇就用
+        <a href="../decode/">內部連結</a>（有助 SEO）。】</p>
+
+      <blockquote><p>【一句想被記住的話，會顯示成藍色引言。】</p></blockquote>
+
+      <h2>【小標二】</h2>
+      <ul>
+        <li>【重點清單一】</li>
+        <li>【重點清單二】</li>
+      </ul>
+
+      <!-- 需要放圖時：把圖片放進 assets/ 或 ../assets/img/，再用這個 -->
+      <figure>
+        <img src="../assets/【圖片檔名】.jpg" alt="【圖片說明】" loading="lazy">
+        <figcaption>【圖說 · 來源】</figcaption>
+      </figure>
+
+      <h2>【結尾小標】</h2>
+      <p>【收尾。留一個觀點或行動呼籲。】</p>
+
+      <p class="disc">本文為觀點分析，非投資建議。</p>
+    </div>
+  </article>
+</main>
+
+<!-- ===== 頁尾（不要動） ===== -->
+<footer class="site">
+  <div class="foot-cta" id="subscribe">
+    <h2>每週一篇，看懂幣圈的行銷底層</h2>
+    <p>訂閱電子報，把「怎麼被行銷」的視角裝進你的腦袋。</p>
+    <form class="sub" onsubmit="return false">
+      <input type="email" placeholder="你的 Email" aria-label="Email">
+      <button class="btn btn-primary" type="submit">免費訂閱</button>
+    </form>
+  </div>
+  <div class="shell foot-grid">
+    <div class="foot-brand">
+      <img src="../assets/logo-full.png" alt="chainfunnel">
+      <p>用行銷人的眼睛，拆解幣圈。繁體中文的加密觀察站。</p>
+    </div>
+    <div class="foot-links">
+      <div class="foot-col">
+        <b>欄目</b>
+        <a href="../decode/">幣圈拆解</a>
+        <a href="../exchange/">交易所指南</a>
+        <a href="../guide/">新手教學</a>
+        <a href="../column/">觀察專欄</a>
+        <a href="../pivot/">轉職幣圈</a>
+        <a href="../journal/">學習日誌</a>
+      </div>
+      <div class="foot-col">
+        <b>關於</b>
+        <a href="../about.html">關於我</a>
+        <a href="#subscribe">訂閱電子報</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-legal">
+    <span>© 2026 chainfunnel · 本站為觀點分析，非投資建議</span>
+    <span class="social"><a href="#" aria-label="X">X ↗</a><a href="#" aria-label="LinkedIn">LinkedIn ↗</a></span>
+  </div>
+</footer>
+
+<script>
+  (function(){var b=document.getElementById('burger'),n=document.getElementById('nav');
+    b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});
+    n.addEventListener('click',function(e){if(e.target.tagName==='A')n.classList.remove('open');});})();
+</script>
+</body>
+</html>
