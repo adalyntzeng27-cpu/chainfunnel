@@ -4,6 +4,9 @@
 # 可重新產生的套件
 _tools/node_modules/
 
+# 文章草稿（審過、放進欄目後才上線）
+_drafts/
+
 # 系統雜檔
 .DS_Store
 Thumbs.db

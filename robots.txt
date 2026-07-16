@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# 開發工具與草稿不需索引
+Disallow: /_tools/
+Disallow: /_drafts/
+
+Sitemap: https://adalyntzeng27-cpu.github.io/chainfunnel/sitemap.xml

@@ -164,8 +164,7 @@ section{padding:44px 0}
 /* about strip */
 .about{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;
   background:linear-gradient(120deg,var(--panel),var(--bg-2));border:1px solid var(--line);border-radius:var(--r);padding:28px}
-.about .av{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;font-size:30px;font-weight:800;
-  color:var(--on-accent);background:linear-gradient(135deg,var(--accent-3),var(--accent-2));box-shadow:var(--glow-soft)}
+.about .av{width:76px;height:76px;border-radius:50%;object-fit:cover;flex:0 0 auto;box-shadow:var(--glow-soft)}
 .about h3{margin:0 0 8px;font-size:20px}
 .about p{margin:0;color:var(--muted);font-size:15px;line-height:1.65}
 @media(max-width:560px){.about{grid-template-columns:1fr;text-align:center}.about .av{margin:0 auto}}
@@ -204,10 +203,23 @@ section{padding:44px 0}
 .a-title{font-size:clamp(28px,5vw,42px);line-height:1.18;letter-spacing:-.03em;margin:0 0 16px;font-weight:850}
 .a-dek{font-size:clamp(17px,2.4vw,20px);color:var(--muted);line-height:1.6;margin:0 0 26px}
 .a-byline{display:flex;align-items:center;gap:12px;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.a-byline .av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:17px;flex:0 0 auto;
-  color:var(--on-accent);background:linear-gradient(135deg,var(--accent-3),var(--accent-2));box-shadow:var(--glow-soft)}
+.a-byline .av{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:0 0 auto;box-shadow:var(--glow-soft)}
 .a-byline b{font-size:15px}
 .a-byline .a-sub{font-family:var(--mono);font-size:12.5px;color:var(--faint);margin-top:2px}
+
+.a-meta{display:flex;align-items:center;gap:12px;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.a-av{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:0 0 auto;box-shadow:var(--glow-soft)}
+.a-by b{font-size:15px}
+.a-by .m{font-family:var(--mono);font-size:12.5px;color:var(--faint);margin-top:2px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.a-by .m .d{width:3px;height:3px;border-radius:50%;background:var(--faint);display:inline-block}
+
+.authbox{display:flex;align-items:center;gap:16px;padding:22px;border:1px solid var(--line);border-radius:var(--r);
+  background:var(--panel);margin:36px 0}
+.authbox .av{width:56px;height:56px;border-radius:50%;object-fit:cover;flex:0 0 auto;box-shadow:var(--glow-soft)}
+.authbox .an{font-weight:800;font-size:15px;margin-bottom:4px}
+.authbox .ab{color:var(--muted);font-size:14px;line-height:1.6}
+.authbox a{color:var(--accent);font-size:13px;display:inline-block;margin-top:8px}
+@media(max-width:560px){.authbox{flex-direction:column;text-align:center}}
 
 .prose{font-size:17.5px;line-height:1.85}
 .prose>p{margin:0 0 22px;color:var(--ink)}
@@ -228,6 +240,28 @@ section{padding:44px 0}
 .prose figcaption{font-family:var(--mono);font-size:12.5px;color:var(--faint);margin-top:10px;text-align:center}
 .prose code{font-family:var(--mono);font-size:.9em;background:var(--panel);padding:2px 6px;border-radius:6px;border:1px solid var(--line)}
 .prose .disc{font-size:13px;color:var(--faint);line-height:1.6;border-top:1px solid var(--line);padding-top:18px;margin-top:34px}
+
+/* 表格：手機優先，寬表用外層捲動，不擠版面 */
+.prose .table-wrap{margin:30px 0;overflow-x:auto;border:1px solid var(--line);border-radius:var(--r)}
+.prose table{width:100%;border-collapse:collapse;font-size:15px;min-width:480px}
+.prose th{text-align:left;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--panel)}
+.prose td{padding:12px 14px;border-bottom:1px solid var(--line-soft);color:var(--ink);vertical-align:top}
+.prose tbody tr:last-child td{border-bottom:none}
+.prose td.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.prose caption{caption-side:bottom;font-family:var(--mono);font-size:12px;color:var(--faint);padding:10px 14px;text-align:left}
+
+/* 待補圖片/表格佔位（只在草稿預覽看得到，正式出稿前要換成真內容） */
+.prose .media-todo{margin:30px 0;padding:18px 20px;border:1.5px dashed var(--accent);border-radius:var(--r);background:var(--accent-soft)}
+.prose .media-todo b{display:block;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.prose .media-todo p{margin:0;font-size:14px;line-height:1.7;color:var(--ink)}
+
+/* 參考來源清單（文末，每篇引用真實資料都要列） */
+.prose .refs{margin:34px 0 0;padding-top:18px;border-top:1px solid var(--line)}
+.prose .refs h2{margin-top:0}
+.prose .refs ol{font-size:14px;color:var(--faint);padding-left:20px}
+.prose .refs li{margin-bottom:6px}
+.prose .refs a{color:var(--faint);text-decoration-color:var(--line)}
+.prose .refs a:hover{color:var(--accent);text-decoration-color:var(--accent)}
 
 /* ------------------------------------------------------------ footer */
 footer.site{border-top:1px solid var(--line);margin-top:40px;background:var(--bg-2);padding:52px 0 40px}
