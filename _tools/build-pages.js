@@ -14,6 +14,11 @@ const SITE_NAME = 'chainfunnel';
 const AUTHOR = '艾德';
 const OG_IMAGE = BASE_URL + '/assets/logo-full.png';
 
+/* ⚠️ 讀者數還不夠多時先關閉訂閱功能（nav 按鈕＋頁尾表單），
+   之後要重新打開，把這個改回 true 再重跑 build-pages.js 就好。
+   手寫頁（index/about/既有文章）的訂閱區塊是用註解包起來，同樣搜尋「訂閱功能」統一打開。 */
+const SUBSCRIBE_ENABLED = false;
+
 // ---- 單一導覽來源（改這裡就好） ----
 const NAV = [
   {slug:'decode',  href:'decode/',  label:'幣圈拆解'},
@@ -79,6 +84,7 @@ function header(root, active){
     const cur = n.slug===active ? ' aria-current="page"' : '';
     return `      <a href="${root}${n.href}"${cur}>${n.label}</a>`;
   }).join('\n');
+  const subBtn = SUBSCRIBE_ENABLED ? `\n    <a class="btn-sub" href="#subscribe">訂閱</a>` : '';
   return `<header class="site">
   <div class="bar">
     <a class="brand" href="${root}index.html" aria-label="chainfunnel 首頁"><img src="${root}assets/logo-mark.png" alt=""><b>chainfunnel</b></a>
@@ -86,16 +92,14 @@ function header(root, active){
     <nav class="nav" id="nav">
 ${nav}
     </nav>
-    <span class="sp"></span>
-    <a class="btn-sub" href="#subscribe">訂閱</a>
+    <span class="sp"></span>${subBtn}
   </div>
 </header>`;
 }
 
 function footer(root){
   const links = NAV.filter(n=>n.slug!=='about').map(n=>`        <a href="${root}${n.href}">${n.label}</a>`).join('\n');
-  return `<footer class="site">
-  <div class="foot-cta" id="subscribe">
+  const cta = SUBSCRIBE_ENABLED ? `  <div class="foot-cta" id="subscribe">
     <h2>每週一篇，看懂幣圈的行銷底層</h2>
     <p>訂閱電子報，把「怎麼被行銷」的視角裝進你的腦袋。</p>
     <form class="sub" onsubmit="return false">
@@ -103,7 +107,10 @@ function footer(root){
       <button class="btn btn-primary" type="submit">免費訂閱</button>
     </form>
   </div>
-  <div class="shell foot-grid">
+` : '';
+  const subLink = SUBSCRIBE_ENABLED ? `\n        <a href="#subscribe">訂閱電子報</a>` : '';
+  return `<footer class="site">
+${cta}  <div class="shell foot-grid">
     <div class="foot-brand">
       <img src="${root}assets/logo-full.png" alt="chainfunnel">
       <p>用行銷人的眼睛，拆解幣圈。繁體中文的加密觀察站。</p>
@@ -115,8 +122,7 @@ ${links}
       </div>
       <div class="foot-col">
         <b>關於</b>
-        <a href="${root}about.html">關於我</a>
-        <a href="#subscribe">訂閱電子報</a>
+        <a href="${root}about.html">關於我</a>${subLink}
       </div>
     </div>
   </div>
