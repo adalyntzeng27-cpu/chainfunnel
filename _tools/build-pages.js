@@ -161,10 +161,11 @@ function postRow(root, p, i){
 
 function catPage(slug, c){
   const root = '../';
-  const rows = c.posts.map((p,i)=>postRow(root,p,i)).join('\n');
-  const soonCount = c.posts.filter(p=>p.soon).length;
-  const empty = soonCount===c.posts.length
-    ? `\n    <div class="empty-note"><b>這個欄目正在籌備中。</b><br>上面是規劃中的主題，第一批文章即將上線。想搶先看？<a href="#subscribe" style="color:var(--accent)">訂閱電子報</a>。</div>`
+  // 只渲染已完成文章；soon:true 為內容路線圖，保留在 CATS 但不上站。
+  const published = c.posts.filter(p=>!p.soon);
+  const rows = published.map((p,i)=>postRow(root,p,i)).join('\n');
+  const empty = published.length===0
+    ? `\n    <div class="empty-note"><b>這個欄目正在籌備中。</b><br>第一批文章即將上線，敬請期待。</div>`
     : '';
   const title = c.seoTitle || `${c.name} · ${SITE_NAME}`;
   const desc  = c.seoDesc  || c.dek;
@@ -234,7 +235,8 @@ for(const [slug,c] of Object.entries(CATS)){
   const dir = path.join(__dirname, '..', slug);
   fs.mkdirSync(dir,{recursive:true});
   fs.writeFileSync(path.join(dir,'index.html'), catPage(slug,c));
-  console.log('wrote', slug+'/index.html', '('+c.posts.length+' posts)');
+  const pub = c.posts.filter(p=>!p.soon).length;
+  console.log('wrote', slug+'/index.html', '('+pub+' published / '+c.posts.length+' total)');
   n++;
 }
 console.log('done —', n, 'category pages');

@@ -9,7 +9,7 @@
 ## 一、資料夾長怎樣（哪些是網站、哪些是工具）
 
 ```
-content/                    ← 這整個資料夾就是「網站」，部署時上傳這個
+website/                    ← 這整個資料夾就是「網站」，部署時上傳這個
 │
 ├─ index.html               首頁
 ├─ about.html               關於我
@@ -119,7 +119,7 @@ node _tools/build-pages.js
 
 推薦 **Cloudflare Pages** 或 **GitHub Pages**（都免費、附 HTTPS、速度快）。
 
-- 上傳／連結的是 **`content/` 資料夾**。
+- 上傳／連結的是 **`website/` 資料夾**。
 - **部署時排除**（這些是工具與文件，不該公開）：`_tools/`、`.claude/`、`README.md`。
   （多數平台可設定忽略清單；或部署前先把這幾個移開。）
 - 網域：買一個接上即可（例如 chainfunnel.xyz）。
