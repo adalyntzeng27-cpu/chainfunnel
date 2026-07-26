@@ -1,57 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://adalyntzeng27-cpu.github.io/chainfunnel/</loc>
+    <loc>https://www.chain-funnel.com/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://adalyntzeng27-cpu.github.io/chainfunnel/about.html</loc>
+    <loc>https://www.chain-funnel.com/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://adalyntzeng27-cpu.github.io/chainfunnel/decode/</loc>
+    <loc>https://www.chain-funnel.com/decode/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adalyntzeng27-cpu.github.io/chainfunnel/exchange/</loc>
+    <loc>https://www.chain-funnel.com/exchange/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adalyntzeng27-cpu.github.io/chainfunnel/guide/</loc>
+    <loc>https://www.chain-funnel.com/guide/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adalyntzeng27-cpu.github.io/chainfunnel/column/</loc>
+    <loc>https://www.chain-funnel.com/column/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adalyntzeng27-cpu.github.io/chainfunnel/pivot/</loc>
+    <loc>https://www.chain-funnel.com/pivot/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adalyntzeng27-cpu.github.io/chainfunnel/journal/</loc>
+    <loc>https://www.chain-funnel.com/journal/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adalyntzeng27-cpu.github.io/chainfunnel/column/racing/motogp-crypto-sponsorship.html</loc>
+    <loc>https://www.chain-funnel.com/column/racing/motogp-crypto-sponsorship.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://adalyntzeng27-cpu.github.io/chainfunnel/decode/exchange-marketing-playbook.html</loc>
+    <loc>https://www.chain-funnel.com/decode/exchange-marketing-playbook.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://adalyntzeng27-cpu.github.io/chainfunnel/pivot/crypto-marketing-jobs.html</loc>
+    <loc>https://www.chain-funnel.com/pivot/crypto-marketing-jobs.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.chain-funnel.com/pivot/why-marketers-pivot-to-crypto.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

@@ -5,4 +5,4 @@ Allow: /
 Disallow: /_tools/
 Disallow: /_drafts/
 
-Sitemap: https://adalyntzeng27-cpu.github.io/chainfunnel/sitemap.xml
+Sitemap: https://www.chain-funnel.com/sitemap.xml
