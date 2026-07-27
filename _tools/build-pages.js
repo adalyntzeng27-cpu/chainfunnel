@@ -65,7 +65,7 @@ const CATS = {
     ]},
   pivot:{ico:'🚀',name:'轉職幣圈',kw:"行銷人 轉職 幣圈",seoTitle:"行銷人如何轉職幣圈？職缺、作品集與面試全攻略",seoDesc:"行銷人如何轉職幣圈：職缺地圖、零經驗作品集、面試考題與薪資。用行銷人的眼睛，把這條路一篇篇拆解清楚。",dek:'寫給對「行銷人跨進幣圈」這件事好奇的人。路徑、職缺地圖、作品集、面試、以及那些踩進去才知道的坑——用行銷人的眼睛，一篇一篇拆給你看。',
     posts:[
-      {href:'pivot/why-marketers-pivot-to-crypto.html',kicker:'現象觀察',title:'一堆行銷人轉職幣圈，原因真的只是錢嗎？我把帳算了一遍',dek:'台灣月薪 4.5 萬 vs 海外幣圈 12 萬美金——把薪資反差、裁員潮、rug pull 都算過一遍，拆這個現象的底層邏輯。',meta:'2026 · 8 分鐘',soon:false},
+      {href:'pivot/why-marketers-pivot-to-crypto.html',kicker:'現象觀察',title:'2026 年還有行銷人想轉職幣圈，原因真的只是錢嗎？',dek:'幣圈熊市、市值蒸發近 9 千億美元、還在裁員——這種時候「為了錢」最說不通。把薪資反差、去泡沫招聘、rug pull 算一遍，拆熊市裡還想進的人到底圖什麼。',meta:'2026 · 8 分鐘',soon:false},
       {href:'pivot/crypto-marketing-jobs.html',kicker:'職缺地圖',title:'幣圈行銷職缺到底在做什麼？中英文資料翻遍後，我發現這題根本沒人講清楚',dek:'Growth、Community、Content、KOL/BD——名字都很潮，但實際在幹嘛、薪水多少、沒經驗能不能應徵？中英文資料查了一輪的真實整理。',meta:'2026 · 9 分鐘',soon:false},
       {kicker:'作品集',title:'零經驗怎麼建幣圈作品集？我的三個月計畫',dek:'自架網站、實測交易所、參與 DAO——把「沒經驗」變成「有作品」的具體路線。',soon:true},
       {kicker:'面試',title:'幣圈行銷面試都問什麼？行銷職的考題拆解',dek:'從我蒐集到的真實題目，反推他們在找什麼樣的人，以及怎麼準備。',soon:true},
