@@ -16,7 +16,7 @@ const path = require('path');
 const BASE_URL = 'https://www.chain-funnel.com';
 
 const SITE_NAME = 'chainfunnel';
-const AUTHOR = '艾德';
+const AUTHOR = '華特';
 const OG_IMAGE = BASE_URL + '/assets/logo-full.png';
 
 /* Google Analytics 4 追蹤碼（gtag.js）。換 GA 資源只改這個 ID。
