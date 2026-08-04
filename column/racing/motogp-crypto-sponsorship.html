@@ -11,6 +11,7 @@
 <link rel="canonical" href="https://www.chain-funnel.com/column/racing/motogp-crypto-sponsorship.html">
 <link rel="icon" type="image/png" sizes="128x128" href="../../assets/favicon-128.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon-32.png">
+<link rel="stylesheet" href="../../assets/site.css">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="chainfunnel">
 <meta property="og:locale" content="zh_TW">
@@ -46,7 +47,7 @@
    "@type": "BreadcrumbList",
    "itemListElement": [
     {"@type": "ListItem", "position": 1, "name": "首頁", "item": "https://www.chain-funnel.com/"},
-    {"@type": "ListItem", "position": 2, "name": "觀察專欄", "item": "https://www.chain-funnel.com/column/"},
+    {"@type": "ListItem", "position": 2, "name": "幣圈拆解", "item": "https://www.chain-funnel.com/decode/"},
     {"@type": "ListItem", "position": 3, "name": "加密貨幣為什麼贊助賽車？", "item": "https://www.chain-funnel.com/column/racing/motogp-crypto-sponsorship.html"}
    ]
   }
@@ -54,51 +55,10 @@
 }
 </script>
 <style>
-  :root{
-    --bg:#080B12; --surface:#111827; --panel:#151D2E; --panel-2:#1B2439;
-    --ink:#E9EEF7; --muted:#9AA7BD; --faint:#66738C; --line:#222D44;
-    --accent:#22C7F5; --on-accent:#04121B;
-    --accent-soft:color-mix(in srgb, var(--accent) 14%, var(--surface));
-    --ink-panel:#05070A; --grid:#222D44;
-    --cjk:"PingFang TC","PingFang SC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
-    --mono:ui-monospace,"SF Mono","JetBrains Mono","Roboto Mono",Menlo,monospace;
-    --maxw:1120px; --read:700px;
-  }
-  :root[data-theme="light"]{
-    --bg:#F4F7FB; --surface:#FFFFFF; --panel:#EEF3F9; --panel-2:#E4ECF5;
-    --ink:#0E1726; --muted:#51617A; --faint:#8595AC; --line:#DDE5EF;
-    --accent:#0E88C4; --on-accent:#FFFFFF; --ink-panel:#0E1726; --grid:#E4ECF5;
-  }
-  :root[data-theme="dark"]{
-    --bg:#080B12; --surface:#111827; --panel:#151D2E; --panel-2:#1B2439;
-    --ink:#E9EEF7; --muted:#9AA7BD; --faint:#66738C; --line:#222D44;
-    --accent:#22C7F5; --on-accent:#04121B; --ink-panel:#05070A; --grid:#222D44;
-  }
-
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--cjk);line-height:1.72;
-    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-  a{color:inherit}
-  .shell{max-width:var(--maxw);margin:0 auto;padding:0 18px}
-  .read{max-width:var(--read);margin:0 auto;padding:0 18px}
-  .mono{font-family:var(--mono)}
-  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-
-  /* header */
-  header.site{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 86%,transparent);
-    backdrop-filter:saturate(1.2) blur(10px);border-bottom:1px solid var(--line)}
-  .bar{max-width:var(--maxw);margin:0 auto;padding:11px 18px;display:flex;align-items:center;gap:14px}
-  .brand{font-weight:800;font-size:19px;letter-spacing:-.02em;text-decoration:none;display:inline-flex;align-items:center;gap:9px}
-  .brand img{height:28px;width:auto;filter:drop-shadow(0 0 10px color-mix(in srgb,var(--accent) 55%,transparent))}
-  .brand b{background:linear-gradient(92deg,#5EE0FF,var(--accent) 45%,#2E7BFF);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .brand em{font-family:var(--mono);font-style:normal;font-size:10px;letter-spacing:.22em;color:var(--accent);vertical-align:super;font-weight:600}
-  .bar .sp{margin-left:auto}
-  .iconbtn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface);
-    color:var(--muted);display:grid;place-items:center;cursor:pointer;font-size:16px}
-  .btn-sub{background:var(--accent);color:var(--on-accent);border:0;border-radius:10px;font-weight:700;
-    font-size:14px;padding:0 15px;height:38px;cursor:pointer;text-decoration:none;display:inline-grid;place-items:center;white-space:nowrap}
+  /* ⚠️ 這頁的版面基底、配色變數、導覽列與頁尾一律吃 assets/site.css（上面那行 link）。
+     下面只留這篇文章自己的元件樣式（圖表、統計磚、分享列、來源區…）。
+     2026-08-04 移除：整套自帶的 :root 配色變數與淺色主題（全站是深色單一主題，
+     那個淺／深色切換鈕連同 JS 一起拿掉了）、重複的 base reset 與 header/footer chrome。 */
 
   /* progress bar */
   .progress{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:60}
@@ -212,14 +172,8 @@
   .authbox .ab{font-size:13px;color:var(--muted);margin:5px 0 9px;line-height:1.55}
   .authbox a{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;color:var(--accent);text-decoration:none;font-weight:600}
 
-  footer.site{border-top:1px solid var(--line);margin-top:40px;padding:30px 0 44px}
-  .foot{color:var(--faint);font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;text-align:center;line-height:1.9}
-
   @media (min-width:560px){
     .stats{grid-template-columns:repeat(3,1fr)}
-  }
-  @media (min-width:640px){
-    .shell,.bar{padding-left:24px;padding-right:24px}
   }
 </style>
 
@@ -228,8 +182,13 @@
 <header class="site">
   <div class="bar">
     <a class="brand" href="../../index.html" aria-label="chainfunnel 首頁"><img src="../../assets/logo-mark.png" alt=""><b>chainfunnel</b></a>
+    <button class="burger" id="burger" aria-label="選單" aria-expanded="false">☰</button>
+    <nav class="nav" id="nav">
+      <a href="../../decode/" aria-current="page">幣圈拆解</a>
+      <a href="../../pivot/">轉職幣圈</a>
+      <a href="../../about.html">關於我</a>
+    </nav>
     <span class="sp"></span>
-    <button class="iconbtn" id="theme" aria-label="切換深淺色">◐</button>
     <!-- 訂閱功能：讀者數多一點再打開
     <a class="btn-sub" href="#nl">訂閱</a>
     -->
@@ -238,7 +197,8 @@
 
 <main>
   <div class="read a-head">
-    <span class="a-chip">賽車 × 幣圈 · Decode</span>
+    <p class="crumb"><a href="../../index.html">首頁</a> / <a href="../../decode/">幣圈拆解</a></p>
+    <span class="a-chip">幣圈拆解 · 賽車 × 幣圈</span>
     <h1 class="a-title">加密貨幣為什麼贊助賽車？拆開看，是賭場的老邏輯</h1>
     <p class="a-dek">幣圈幾乎包了整條 F1 的 pit lane。第一眼像有錢任性，但拆開看，其實是賭場那套「錢跟著人走」的老邏輯——原封不動搬上了賽車場。</p>
     <div class="a-meta">
@@ -384,7 +344,7 @@
       <img class="av" src="../../assets/profile.png" alt="艾德" width="56" height="56" loading="lazy">
       <div>
         <div class="an">艾德</div>
-        <div class="ab">前 B2C 行銷，做過代理商、灰產與韓國市場，現在一頭栽進幣圈。這裡用行銷的邏輯拆解加密世界——不喊單，只拆解。</div>
+        <div class="ab">行銷人。習慣把廣告與獲客背後的算計拆開來看，這裡拆的是加密世界——不喊單，只拆解。</div>
         <a href="#">→ LinkedIn</a>
       </div>
     </div>
@@ -413,17 +373,35 @@
 </main>
 
 <footer class="site">
-  <div class="foot"><a href="../../index.html" style="color:inherit">chainfunnel</a> · 用行銷人的眼睛，拆解幣圈</div>
+  <div class="shell foot-grid">
+    <div class="foot-brand">
+      <img src="../../assets/logo-full.png" alt="chainfunnel">
+      <p>用行銷人的眼睛，拆解幣圈。繁體中文的加密觀察站。</p>
+    </div>
+    <div class="foot-links">
+      <div class="foot-col">
+        <b>欄目</b>
+        <a href="../../decode/">幣圈拆解</a>
+        <a href="../../pivot/">轉職幣圈</a>
+      </div>
+      <div class="foot-col">
+        <b>關於</b>
+        <a href="../../about.html">關於我</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-legal">
+    <span>© 2026 chainfunnel · 本站為觀點分析，非投資建議</span>
+    <span class="social"><a href="#" aria-label="X">X ↗</a><a href="#" aria-label="LinkedIn">LinkedIn ↗</a></span>
+  </div>
 </footer>
 
 <script>
   (function(){
-    var root=document.documentElement;
-    document.getElementById('theme').addEventListener('click',function(){
-      var cur=root.getAttribute('data-theme');
-      if(!cur){cur=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';}
-      root.setAttribute('data-theme',cur==='dark'?'light':'dark');
-    });
+    var b=document.getElementById('burger'), n=document.getElementById('nav');
+    b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);});
+    n.addEventListener('click',function(e){if(e.target.tagName==='A')n.classList.remove('open');});
+
     var prog=document.getElementById('prog');
     function onScroll(){
       var h=document.documentElement;

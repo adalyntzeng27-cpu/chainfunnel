@@ -1,7 +1,12 @@
 /* ============================================================
-   chainfunnel — 欄目列表頁 + sitemap 產生器
+   chainfunnel — 欄目列表頁 + 首頁區塊 + sitemap 產生器
    改欄目/導覽/文章清單只改這支，然後 `node _tools/build-pages.js` 重生。
    輸出純靜態 HTML，執行期無任何依賴。
+
+   ⭐ 這支現在也會回寫 index.html 與 about.html 裡以 <!-- AUTO:xxx --> 標記
+      包住的區塊（導覽、招牌拆解、最新文章、逛逛欄目、頁尾欄目連結）。
+      → 新文章只要登記進下面的 POSTS，首頁「最新文章」就會自動更新，
+        不需要（也不要）手改那幾段 HTML。標記以外的地方仍然是手寫的。
    ============================================================ */
 const fs = require('fs');
 const path = require('path');
@@ -27,88 +32,224 @@ const GTAG = `<!-- Google tag (gtag.js) -->
    手寫頁（index/about/既有文章）的訂閱區塊是用註解包起來，同樣搜尋「訂閱功能」統一打開。 */
 const SUBSCRIBE_ENABLED = false;
 
-// ---- 單一導覽來源（改這裡就好） ----
-const NAV = [
-  {slug:'decode',  href:'decode/',  label:'幣圈拆解'},
-  {slug:'exchange',href:'exchange/',label:'交易所指南'},
-  {slug:'guide',   href:'guide/',   label:'新手教學'},
-  {slug:'column',  href:'column/',  label:'觀察專欄'},
-  {slug:'pivot',   href:'pivot/',   label:'轉職幣圈'},
-  {slug:'journal', href:'journal/', label:'學習日誌'},
-  {slug:'about',   href:'about.html',label:'關於我'},
+// 首頁「最新文章」要列幾篇（依發佈日期由新到舊，不做任何排除 →
+// 新上線的文章必定出現在最前面）
+const LATEST_COUNT = 4;
+
+/* ============================================================
+   ⭐ 欄目定義（2026-08-04 重整：6 欄 → 3 欄 → 再收斂為 2 欄）
+
+   第一次收斂（6→3）解決的問題：3 個欄目是空殼（exchange / guide / journal
+   籌備中卻掛在導覽與 sitemap 上），MotoGP 與泡菜溢價同時掛在兩個欄目，
+   journal（轉職幣圈 心得）與 pivot（行銷人 轉職 幣圈）打同一個搜尋意圖。
+
+   第二次收斂（3→2）解決的問題：「幣圈拆解」與「觀察專欄」的界線，就算寫成
+   「對內 vs. 對外」讀者也分不出來——因為「拆解」是全站的動詞（首頁標語就是
+   「用行銷人的眼睛，拆解幣圈」），叫這個名字的欄目會讓另一欄看起來像它的子集。
+   與其硬撐兩個名字，不如合成一欄，用 kicker 分主題。
+
+   剩下兩條界線（新文章要歸哪一欄，照 `rule` 判斷，不要憑感覺）：
+     decode  幣圈的行銷動作 —— 怎麼買注意力（贊助、版位、市場）、怎麼把注意力變成錢（漏斗、誘因、CAC）
+     pivot   行銷人要進這個產業需要知道的事 —— 主角是求職者（含過程筆記，原 journal 併入）
+
+   ⚠️ 一篇文章只登記一次、只屬於一個欄目（見下方 POSTS 的 cat 欄位）。
+   ⚠️ 檔案位置與欄目 slug 不必一致：已上線的兩篇贊助文留在 `column/` 底下
+      不動網址（改網址的 SEO 成本沒必要付），新文章一律放 `decode/<主題>/`。
+   ============================================================ */
+const CATS = {
+  decode: {
+    ico: '🧠',
+    name: '幣圈拆解',
+    // 支柱詞「交易所行銷手法」「幣圈 體育贊助」歸各自的支柱長文，欄目頁不跟它們搶
+    kw: '幣圈行銷手法',
+    seoTitle: '幣圈拆解｜交易所行銷手法、體育贊助與注意力經濟',
+    seoDesc: '用行銷人的眼睛拆解幣圈行銷手法：交易所怎麼靠空投、KOL、返佣、聯盟漏斗獲客，以及幣圈為什麼買下 F1 與 MotoGP 的版位、卻放掉世界盃。不談幣價，只拆手法。',
+    dek: '空投、KOL、返佣、聯盟漏斗，到贊助 F1 與 MotoGP 的版位——幣圈怎麼把注意力買進來，又怎麼把它換成入金。這裡不談幣價，只拆手法。',
+    rule: '收錄標準：主角是「幣圈的行銷動作」——不論是對外買注意力（體育贊助、賽車、地區市場、注意力經濟），還是對內把注意力變現（獲客漏斗、空投、KOL、CAC）。判斷句：這篇在講幣圈怎麼買注意力、或怎麼把注意力變成錢 → 放這裡。用 kicker 標主題（體育贊助／賽車 × 幣圈／交易所行銷／韓國加密…），欄目不再細分。',
+    tile: '幣圈怎麼買注意力、又怎麼變現',
+  },
+  pivot: {
+    ico: '🚀',
+    name: '轉職幣圈',
+    kw: '行銷人 轉職 幣圈',
+    seoTitle: '行銷人如何轉職幣圈？職缺、作品集與面試全攻略',
+    seoDesc: '行銷人如何轉職幣圈：職缺地圖、零經驗作品集、面試考題與薪資區間，加上邊拆邊學的過程筆記。用行銷人的眼睛，把這條路一篇篇拆解清楚。',
+    dek: '寫給對「行銷人跨進幣圈」這件事好奇的人。職缺地圖、作品集、面試、薪資，以及邊拆邊學路上想通與卡住的事——一篇一篇拆給你看。',
+    rule: '收錄標準：主角是「要進這個產業的人」——職缺、作品集、面試、薪資，以及自己邊補課邊修正的觀察筆記（原「學習日誌」欄目已併入這裡）。',
+    tile: '行銷人跨進幣圈的路線與筆記',
+  },
+};
+
+/* ---- 未開放欄目（資料夾與列表頁已下架，不進導覽、不進 sitemap） ----
+   原本的「交易所指南」與「新手教學」兩欄合併成這一欄，等實際累積 2 篇
+   以上再搬回上面的 CATS 重跑即可。affiliate 錢頁屬階段 2，本來就不該早開。 */
+const PARKED = {
+  tools: {
+    ico: '🛠',
+    name: '工具實測',
+    kw: '加密貨幣交易所 比較 台灣',
+    note: '合併原 exchange（交易所比較／出入金／手續費）與 guide（錢包、避雷、DEX 入門）。滿 2 篇再開欄。',
+  },
+};
+
+/* ============================================================
+   ⭐ 文章總表（全站唯一來源）
+   一篇文章只出現在這個陣列一次，用 cat 指定欄目——欄目列表頁、首頁
+   「最新文章」「招牌拆解」、sitemap 全部從這裡長出來。
+
+   欄位：
+     cat       欄目 slug（decode / column / pivot；PARKED 的 tools 會被忽略）
+     href      相對網址；soon 的文章沒有這欄
+     date      發佈日 YYYY-MM-DD（＝文章 JSON-LD 的 datePublished，決定排序）
+     read      閱讀時間，例如 '12 分鐘'
+     cardTitle / cardDek  首頁卡片用的短版（省略則沿用 title / dek）
+     featured  true ＝ 進首頁「招牌拆解」（人工精選，取前 3）
+     soon      true ＝ 內容路線圖，保留在表裡但不上站
+   ============================================================ */
+const POSTS = [
+  // ---- decode｜買注意力：贊助、賽車、地區市場（檔案留在 column/ 不動網址）----
+  {
+    cat: 'decode', featured: true,
+    href: 'column/sponsorship/crypto-sports-sponsorship-2026.html',
+    kicker: '體育贊助',
+    title: '幣圈為什麼不贊助 2026 世界盃了？答案可能不只是熊市：錢還在，只是換了一個位置',
+    dek: '世界盃沒有一個交易所 logo，但同年幣圈體育贊助總額創新高 5.65 億美元。拆解 OKX 怎麼把一支 F1 車隊用成一條通路。',
+    cardTitle: '幣圈為什麼不贊助 2026 世界盃了？',
+    cardDek: '世界盃一個交易所 logo 都沒有，同年體育贊助總額卻創新高。錢沒有變少，是換了一個位置。',
+    date: '2026-08-04', read: '12 分鐘',
+  },
+  {
+    cat: 'decode',
+    href: 'column/racing/motogp-crypto-sponsorship.html',
+    kicker: '賽車 × 幣圈',
+    title: '加密貨幣為什麼贊助賽車？拆開看，是賭場的老邏輯',
+    dek: '幣圈幾乎包了整條 F1 的 pit lane。第一眼像有錢任性，但拆開看，其實是賭場那套「錢跟著人走」的老邏輯搬上了賽車場。',
+    cardDek: '幣圈幾乎包了整條 F1 的 pit lane。第一眼像有錢任性，拆開看是賭場那套「錢跟著人走」的老邏輯。',
+    date: '2026-07-16', read: '12 分鐘',
+  },
+  {
+    cat: 'decode', soon: true,
+    kicker: '韓國加密',
+    title: '泡菜溢價是什麼？韓國人為什麼願意用更貴的價格買幣',
+    dek: '從資金流、法規到民族性的行銷觀察——為什麼同一顆幣，在韓國就是比較貴。',
+  },
+  {
+    cat: 'decode', soon: true,
+    kicker: '注意力經濟',
+    title: '注意力經濟是什麼？為什麼幣圈的本質是一場敘事戰爭',
+    dek: '從行銷人的視角，看幣圈怎麼把「注意力」變成錢。',
+  },
+
+  // ---- decode｜把注意力變現：獲客漏斗、空投、KOL、CAC ----
+  {
+    cat: 'decode', featured: true,
+    href: 'decode/exchange-marketing-playbook.html',
+    kicker: '交易所行銷',
+    title: '交易所行銷手法全拆解：他們到底在買你的什麼',
+    dek: '空投、KOL、返佣、聯盟漏斗——把交易所的獲客機器拆開，看每一顆螺絲怎麼轉。',
+    date: '2026-07-19', read: '11 分鐘',
+  },
+  {
+    cat: 'decode', soon: true,
+    kicker: 'KOL 行銷',
+    title: '幣圈 KOL 行銷怎麼運作？從報價、分潤到帶單話術',
+    dek: '一條 KOL 推文背後的合約長什麼樣，以及為什麼你看到的「觀點」多半是通路。',
+  },
+  {
+    cat: 'decode', soon: true,
+    kicker: '空投',
+    title: '空投行銷是什麼？把「免費送幣」當成獲客成本來算',
+    dek: '空投不是福利，是 CAC。用行銷人的算法，看這筆錢到底買到了什麼樣的用戶。',
+  },
+
+  // ---- pivot 轉職幣圈（含原「學習日誌」的過程筆記） ----
+  {
+    cat: 'pivot',
+    href: 'pivot/why-marketers-pivot-to-crypto.html',
+    kicker: '現象觀察',
+    title: '2026 年還有行銷人想轉職幣圈，原因真的只是錢嗎？',
+    dek: '幣圈熊市、市值蒸發近 9 千億美元、還在裁員——這種時候「為了錢」最說不通。把薪資反差、去泡沫招聘、rug pull 算一遍，拆熊市裡還想進的人到底圖什麼。',
+    cardDek: '熊市、蒸發近 9 千億美元、還在裁員——這種時候「為了錢」最說不通。那還想進的人在圖什麼？',
+    date: '2026-07-27', read: '8 分鐘',
+  },
+  {
+    cat: 'pivot', featured: true,
+    href: 'pivot/crypto-marketing-jobs.html',
+    kicker: '職缺地圖',
+    title: '幣圈行銷職缺到底在做什麼？六個職位，各配一個真實案例拆給你看',
+    dek: 'Community、Growth、Content、KOL、BD、行銷經理——職稱都很潮，但實際在做什麼？把六個常見職位各對上一個真實幣圈案例，加上薪資區間和沒經驗能不能應徵。',
+    cardTitle: '幣圈行銷職缺到底在做什麼？六個職位拆解',
+    cardDek: '職稱都很潮，實際在做什麼？六個常見職位各配一個真實案例，加上薪資區間與門檻。',
+    date: '2026-07-18', read: '11 分鐘',
+  },
+  {
+    cat: 'pivot', soon: true,
+    kicker: '作品集',
+    title: '零經驗怎麼建幣圈作品集？我的三個月計畫',
+    dek: '自架網站、實測交易所、參與 DAO——把「沒經驗」變成「有作品」的具體路線。',
+  },
+  {
+    cat: 'pivot', soon: true,
+    kicker: '面試',
+    title: '幣圈行銷面試都問什麼？行銷職的考題拆解',
+    dek: '從蒐集到的真實題目，反推他們在找什麼樣的人，以及怎麼準備。',
+  },
+  {
+    cat: 'pivot', soon: true,
+    kicker: '過程筆記',
+    title: '剛開始拆幣圈時，最容易看走眼的三件事',
+    dek: '把新手最容易誤判的幾個幣圈現象記下來——不是教學，是踩過之後的修正筆記。',
+  },
+
+  // ---- tools 工具實測（欄目未開放，先寄放路線圖） ----
+  { cat: 'tools', soon: true, kicker: '實測 · Bitget', title: 'Bitget 註冊教學（台灣）：入金到第一筆交易全流程', dek: '一步步實測截圖，含台灣出入金、手續費怎麼算、新手常踩的坑。' },
+  { cat: 'tools', soon: true, kicker: '比較', title: 'OKX vs Bybit vs Bitget：三大交易所到底差在哪', dek: '手續費、深度、出金速度、App 體驗——用一張大比較表幫你選。' },
+  { cat: 'tools', soon: true, kicker: '錢包', title: 'MetaMask 設定教學（繁中）：從安裝到第一次連 DApp', dek: '含助記詞保管、網路設定、常見詐騙提醒。' },
+  { cat: 'tools', soon: true, kicker: '避雷', title: '如何避免假錢包詐騙：五個一定要養成的習慣', dek: '假 App、釣魚網站、授權盜轉——教你用行為習慣把風險降到最低。' },
 ];
 
-// ---- 文章登錄表 ----
-const MOTOGP = {
-  href:'column/racing/motogp-crypto-sponsorship.html',
-  kicker:'賽車 × 幣圈',
-  title:'加密貨幣為什麼贊助賽車？拆開看，是賭場的老邏輯',
-  dek:'幣圈幾乎包了整條 F1 的 pit lane。第一眼像有錢任性，但拆開看，其實是賭場那套「錢跟著人走」的老邏輯搬上了賽車場。',
-  meta:'2026 · 12 分鐘', soon:false,
-};
+// ---- 導覽（單一來源；index.html 與 about.html 由本檔自動同步） ----
+const NAV = [
+  ...Object.entries(CATS).map(([slug, c]) => ({ slug, href: slug + '/', label: c.name })),
+  { slug: 'about', href: 'about.html', label: '關於我' },
+];
 
-// ---- 欄目定義 ----
-const CATS = {
-  decode:{ico:'🧠',name:'幣圈拆解',kw:"交易所行銷手法",seoTitle:"幣圈拆解 · 交易所行銷手法全解｜行銷人視角",seoDesc:"拆解交易所與加密項目的行銷手法：空投、KOL、返佣、聯盟漏斗怎麼運作。用行銷人的眼睛，看懂幣圈怎麼把注意力變成錢。",dek:'全網 99% 的幣圈站教你怎麼賺，這裡拆給你看它怎麼運作、怎麼被行銷。用行銷人的眼睛，解剖加密世界的注意力生意。',
-    posts:[ MOTOGP,
-      {kicker:'韓國加密',title:'泡菜溢價是什麼？韓國人為什麼願意用更貴的價格買幣',dek:'從資金流、法規到民族性的行銷觀察——為什麼同一顆幣，在韓國就是比較貴。',soon:true},
-      {href:'decode/exchange-marketing-playbook.html',kicker:'幣圈拆解 · 交易所行銷',title:'交易所行銷手法全拆解：他們到底在買你的什麼',dek:'空投、KOL、返佣、聯盟漏斗——把交易所的獲客機器拆開，看每一顆螺絲怎麼轉。',meta:'2026 · 11 分鐘',soon:false},
-    ]},
-  exchange:{ico:'💱',name:'交易所指南',kw:"加密貨幣交易所 比較 台灣",seoTitle:"交易所指南｜加密貨幣交易所比較與實測（台灣）",seoDesc:"台灣加密貨幣交易所比較與實測：入金出金、手續費怎麼算、該選哪一家。用行銷人看 CAC 與轉換的角度，帶你看懂交易所的生意。",dek:'入金、手續費、實測、比較。我親身跑過每一條聯盟漏斗，用行銷人看 CAC 與轉換的角度，告訴你交易所的生意怎麼做、你該怎麼選。',
-    posts:[
-      {kicker:'實測 · Bitget',title:'Bitget 註冊教學（台灣）：入金到第一筆交易全流程',dek:'一步步實測截圖，含台灣出入金、手續費怎麼算、新手常踩的坑。',soon:true},
-      {kicker:'比較',title:'OKX vs Bybit vs Bitget：三大交易所到底差在哪',dek:'手續費、深度、出金速度、App 體驗——用一張大比較表幫你選。',soon:true},
-      {kicker:'教學',title:'交易所出金到台灣銀行：路徑、手續費與注意事項',dek:'把幣換回台幣的每一種方式攤開講，包含成本與風險。',soon:true},
-    ]},
-  guide:{ico:'🛠',name:'新手教學',kw:"幣圈 新手教學",seoTitle:"幣圈新手教學｜錢包設定、避雷與 DEX 入門",seoDesc:"幣圈新手教學：MetaMask 錢包設定、如何避免假錢包詐騙、DEX 是什麼。把第一哩路講清楚，讓你不用交昂貴學費。",dek:'錢包設定、避雷、DEX 入門。把幣圈的第一哩路講清楚，讓你不用交昂貴的學費。',
-    posts:[
-      {kicker:'錢包',title:'MetaMask 設定教學（繁中）：從安裝到第一次連 DApp',dek:'含助記詞保管、網路設定、常見詐騙提醒。',soon:true},
-      {kicker:'避雷',title:'如何避免假錢包詐騙：五個一定要養成的習慣',dek:'假 App、釣魚網站、授權盜轉——教你用行為習慣把風險降到最低。',soon:true},
-      {kicker:'觀念',title:'DEX 是什麼？新手也能懂的去中心化交易所入門',dek:'CEX 跟 DEX 差在哪、什麼時候該用哪一個。',soon:true},
-    ]},
-  column:{ico:'📡',name:'觀察專欄',kw:"幣圈 體育贊助",seoTitle:"觀察專欄｜幣圈體育贊助與注意力經濟",seoDesc:"幣圈為什麼買體育版位、又為什麼放掉世界盃？從 F1 車隊贊助、MotoGP 到粉絲代幣與韓國加密市場，幾乎沒有繁中競品的利基觀察。",dek:'賽車 × 幣圈、注意力經濟、韓國加密——幾乎沒有繁中競品的利基觀察。這裡是護城河，也是我最想寫的地方。',
-    posts:[
-      {href:'column/sponsorship/crypto-sports-sponsorship-2026.html',kicker:'體育贊助',title:'幣圈為什麼不贊助 2026 世界盃了？答案可能不只是熊市：錢還在，只是換了一個位置',dek:'世界盃沒有一個交易所 logo，但同年幣圈體育贊助總額創新高 5.65 億美元。拆解 OKX 怎麼把一支 F1 車隊用成一條通路。',meta:'2026 · 12 分鐘',soon:false},
-      MOTOGP,
-      {kicker:'韓國加密',title:'泡菜溢價是什麼？韓國人為什麼願意用更貴的價格買幣',dek:'從資金流、法規到民族性的行銷觀察——為什麼同一顆幣，在韓國就是比較貴。',soon:true},
-      {kicker:'注意力經濟',title:'注意力經濟是什麼？為什麼幣圈的本質是一場敘事戰爭',dek:'從行銷人的視角，看幣圈怎麼把「注意力」變成錢。',soon:true},
-    ]},
-  pivot:{ico:'🚀',name:'轉職幣圈',kw:"行銷人 轉職 幣圈",seoTitle:"行銷人如何轉職幣圈？職缺、作品集與面試全攻略",seoDesc:"行銷人如何轉職幣圈：職缺地圖、零經驗作品集、面試考題與薪資。用行銷人的眼睛，把這條路一篇篇拆解清楚。",dek:'寫給對「行銷人跨進幣圈」這件事好奇的人。路徑、職缺地圖、作品集、面試、以及那些踩進去才知道的坑——用行銷人的眼睛，一篇一篇拆給你看。',
-    posts:[
-      {href:'pivot/why-marketers-pivot-to-crypto.html',kicker:'現象觀察',title:'2026 年還有行銷人想轉職幣圈，原因真的只是錢嗎？',dek:'幣圈熊市、市值蒸發近 9 千億美元、還在裁員——這種時候「為了錢」最說不通。把薪資反差、去泡沫招聘、rug pull 算一遍，拆熊市裡還想進的人到底圖什麼。',meta:'2026 · 8 分鐘',soon:false},
-      {href:'pivot/crypto-marketing-jobs.html',kicker:'職缺地圖',title:'幣圈行銷職缺到底在做什麼？六個職位，各配一個真實案例拆給你看',dek:'Community、Growth、Content、KOL、BD、行銷經理——職稱都很潮，但實際在做什麼？把六個常見職位各對上一個真實幣圈案例，加上薪資區間和沒經驗能不能應徵。',meta:'2026 · 11 分鐘',soon:false},
-      {kicker:'作品集',title:'零經驗怎麼建幣圈作品集？我的三個月計畫',dek:'自架網站、實測交易所、參與 DAO——把「沒經驗」變成「有作品」的具體路線。',soon:true},
-      {kicker:'面試',title:'幣圈行銷面試都問什麼？行銷職的考題拆解',dek:'從我蒐集到的真實題目，反推他們在找什麼樣的人，以及怎麼準備。',soon:true},
-    ]},
-  journal:{ico:'📔',name:'學習日誌',kw:"轉職幣圈 心得",seoTitle:"學習日誌｜邊拆幣圈邊學的觀察筆記",seoDesc:"邊拆解幣圈行銷、邊補幣圈知識的觀察筆記：踩過的坑、想通的事、還沒搞懂的問題，一篇篇記下來。",dek:'邊拆幣圈、邊補課的過程筆記——想通的、卡住的、還在查的，誠實記下來。不是成功學，是一個行銷人看幣圈的即時觀察。',
-    posts:[
-      {kicker:'觀察筆記',title:'剛開始拆幣圈時，我最容易看走眼的三件事',dek:'把新手最容易誤判的幾個幣圈現象記下來——不是教學，是踩過之後的修正筆記。',soon:true},
-    ]},
-};
+// ---- 從 POSTS 衍生的清單 ----
+const byDateDesc = (a, b) => (b.date || '').localeCompare(a.date || '');
+const published = POSTS.filter(p => !p.soon && p.href && CATS[p.cat]).sort(byDateDesc);
+const postsOf = slug => POSTS.filter(p => p.cat === slug && !p.soon).sort(byDateDesc);
+const latest = published.slice(0, LATEST_COUNT);
+const featured = published.filter(p => p.featured).slice(0, 3);
 
 // ---------- 樣板 ----------
-const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-function header(root, active){
-  const nav = NAV.map(n=>{
-    const cur = n.slug===active ? ' aria-current="page"' : '';
-    return `      <a href="${root}${n.href}"${cur}>${n.label}</a>`;
+function navLinks(root, active, indent) {
+  return NAV.map(n => {
+    const cur = n.slug === active ? ' aria-current="page"' : '';
+    return `${indent}<a href="${root}${n.href}"${cur}>${n.label}</a>`;
   }).join('\n');
+}
+
+function header(root, active) {
   const subBtn = SUBSCRIBE_ENABLED ? `\n    <a class="btn-sub" href="#subscribe">訂閱</a>` : '';
   return `<header class="site">
   <div class="bar">
     <a class="brand" href="${root}index.html" aria-label="chainfunnel 首頁"><img src="${root}assets/logo-mark.png" alt=""><b>chainfunnel</b></a>
     <button class="burger" id="burger" aria-label="選單" aria-expanded="false">☰</button>
     <nav class="nav" id="nav">
-${nav}
+${navLinks(root, active, '      ')}
     </nav>
     <span class="sp"></span>${subBtn}
   </div>
 </header>`;
 }
 
-function footer(root){
-  const links = NAV.filter(n=>n.slug!=='about').map(n=>`        <a href="${root}${n.href}">${n.label}</a>`).join('\n');
+function footLinks(root, indent) {
+  return NAV.filter(n => n.slug !== 'about').map(n => `${indent}<a href="${root}${n.href}">${n.label}</a>`).join('\n');
+}
+
+function footer(root) {
   const cta = SUBSCRIBE_ENABLED ? `  <div class="foot-cta" id="subscribe">
     <h2>每週一篇，看懂幣圈的行銷底層</h2>
     <p>訂閱電子報，把「怎麼被行銷」的視角裝進你的腦袋。</p>
@@ -128,7 +269,7 @@ ${cta}  <div class="shell foot-grid">
     <div class="foot-links">
       <div class="foot-col">
         <b>欄目</b>
-${links}
+${footLinks(root, '        ')}
       </div>
       <div class="foot-col">
         <b>關於</b>
@@ -149,15 +290,16 @@ const burgerJS = `<script>
     n.addEventListener('click',function(e){if(e.target.tagName==='A')n.classList.remove('open');});})();
 </script>`;
 
-function postRow(root, p, i){
-  const idx = String(i+1).padStart(2,'0');
+function postRow(root, p, i) {
+  const idx = String(i + 1).padStart(2, '0');
   const kicker = p.soon
     ? `<div class="rkicker">${esc(p.kicker)}<span class="soon-tag">籌備中</span></div>`
     : `<div class="rkicker">${esc(p.kicker)}</div>`;
+  const meta = p.soon ? '' : `${p.date.slice(0, 4)} · ${p.read}`;
   const inner = `${kicker}
       <h3>${esc(p.title)}</h3>
-      <p>${esc(p.dek)}</p>${p.meta?`\n      <div class="rmeta">${esc(p.meta)}</div>`:''}`;
-  if(p.soon){
+      <p>${esc(p.dek)}</p>${meta ? `\n      <div class="rmeta">${esc(meta)}</div>` : ''}`;
+  if (p.soon) {
     return `    <div class="post-row soon">
       <span class="idx">${idx}</span>
       <div class="body">${inner}</div>
@@ -169,17 +311,17 @@ function postRow(root, p, i){
     </a>`;
 }
 
-function catPage(slug, c){
+function catPage(slug, c) {
   const root = '../';
-  // 只渲染已完成文章；soon:true 為內容路線圖，保留在 CATS 但不上站。
-  const published = c.posts.filter(p=>!p.soon);
-  const rows = published.map((p,i)=>postRow(root,p,i)).join('\n');
-  const empty = published.length===0
+  // 只渲染已完成文章；soon:true 為內容路線圖，保留在 POSTS 但不上站。
+  const pub = postsOf(slug).filter(p => !p.soon);
+  const rows = pub.map((p, i) => postRow(root, p, i)).join('\n');
+  const empty = pub.length === 0
     ? `\n    <div class="empty-note"><b>這個欄目正在籌備中。</b><br>第一批文章即將上線，敬請期待。</div>`
     : '';
   const title = c.seoTitle || `${c.name} · ${SITE_NAME}`;
-  const desc  = c.seoDesc  || c.dek;
-  const url   = `${BASE_URL}/${slug}/`;
+  const desc = c.seoDesc || c.dek;
+  const url = `${BASE_URL}/${slug}/`;
   return `<!doctype html>
 <html lang="zh-Hant">
 <head>
@@ -205,17 +347,21 @@ ${GTAG}
 <meta name="twitter:image" content="${OG_IMAGE}">
 <script type="application/ld+json">
 ${JSON.stringify({
-  "@context":"https://schema.org",
-  "@graph":[
-    {"@type":"CollectionPage","@id":url,"url":url,"name":title,"description":desc,
-     "isPartOf":{"@type":"WebSite","@id":BASE_URL+'/#website',"name":SITE_NAME,"url":BASE_URL+'/'},
-     "about":c.kw ? {"@type":"Thing","name":c.kw} : undefined},
-    {"@type":"BreadcrumbList","itemListElement":[
-      {"@type":"ListItem","position":1,"name":"首頁","item":BASE_URL+'/'},
-      {"@type":"ListItem","position":2,"name":c.name,"item":url}
-    ]}
-  ]
-},null,1)}
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage", "@id": url, "url": url, "name": title, "description": desc,
+        "isPartOf": { "@type": "WebSite", "@id": BASE_URL + '/#website', "name": SITE_NAME, "url": BASE_URL + '/' },
+        "about": c.kw ? { "@type": "Thing", "name": c.kw } : undefined
+      },
+      {
+        "@type": "BreadcrumbList", "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "首頁", "item": BASE_URL + '/' },
+          { "@type": "ListItem", "position": 2, "name": c.name, "item": url }
+        ]
+      }
+    ]
+  }, null, 1)}
 </script>
 </head>
 <body>
@@ -240,54 +386,144 @@ ${burgerJS}
 `;
 }
 
-// ---------- 輸出 ----------
-let n=0;
-for(const [slug,c] of Object.entries(CATS)){
+// ---------- 輸出欄目頁 ----------
+let n = 0;
+for (const [slug, c] of Object.entries(CATS)) {
   const dir = path.join(__dirname, '..', slug);
-  fs.mkdirSync(dir,{recursive:true});
-  fs.writeFileSync(path.join(dir,'index.html'), catPage(slug,c));
-  const pub = c.posts.filter(p=>!p.soon).length;
-  console.log('wrote', slug+'/index.html', '('+pub+' published / '+c.posts.length+' total)');
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'index.html'), catPage(slug, c));
+  const pub = postsOf(slug).filter(p => !p.soon).length;
+  const all = postsOf(slug).length;
+  console.log('wrote', slug + '/index.html', '(' + pub + ' published / ' + all + ' total)');
   n++;
 }
 console.log('done —', n, 'category pages');
+
+/* ============================================================
+   ⭐ 回寫首頁與關於頁的自動區塊
+   只替換 <!-- AUTO:xxx --> ... <!-- /AUTO:xxx --> 之間的內容，
+   標記以外的手寫內容完全不動。找不到標記就跳過並警告（不會壞頁）。
+   ============================================================ */
+function homeCard(p, feat) {
+  const meta = feat
+    ? `${CATS[p.cat].name} · ${p.read}`
+    : `${p.date} · ${CATS[p.cat].name}`;
+  return `    <a class="card${feat ? ' feat' : ''}" href="${p.href}">
+      <div class="kicker">${esc(p.kicker)}</div>
+      <h3>${esc(p.cardTitle || p.title)}</h3>
+      <p>${esc(p.cardDek || p.dek)}</p>
+      <div class="meta">${esc(meta)}</div>
+    </a>`;
+}
+
+function fillAuto(file, blocks) {
+  const abs = path.join(__dirname, '..', file);
+  let html = fs.readFileSync(abs, 'utf8');
+  let hit = 0;
+  for (const [key, body] of Object.entries(blocks)) {
+    const re = new RegExp(`(<!-- AUTO:${key} -->)[\\s\\S]*?(<!-- /AUTO:${key} -->)`);
+    if (!re.test(html)) { console.warn('  ⚠️ ' + file + ' 找不到 AUTO:' + key + ' 標記，略過'); continue; }
+    html = html.replace(re, `$1\n${body}\n$2`);
+    hit++;
+  }
+  fs.writeFileSync(abs, html);
+  console.log('wrote', file, '—', hit + '/' + Object.keys(blocks).length, 'auto blocks');
+}
+
+/* ⭐ 導覽同步：所有手寫頁（index / about / 每篇文章 / 文章模板）的
+   <nav class="nav" id="nav"> 與頁尾「欄目」清單，一律由 NAV 覆寫。
+   → 以後改欄目不必再逐頁手改導覽列，重跑這支就好。
+   （靠 markup 形狀辨識，不需要 AUTO 標記；改過的舊標記會被自動清掉。） */
+function syncNav(file) {
+  const abs = path.join(__dirname, '..', file);
+  if (!fs.existsSync(abs)) return false;
+  let html = fs.readFileSync(abs, 'utf8');
+  const before = html;
+
+  const depth = file.split('/').length - 1;
+  const root = '../'.repeat(depth);
+  // 欄目由 POSTS 決定，不靠資料夾名——已上線的贊助文檔案在 column/ 但欄目是 decode
+  const top = depth ? file.split('/')[0] : null;
+  const post = POSTS.find(p => p.href === file);
+  const active = file === 'about.html' ? 'about'
+    : post ? post.cat
+      : (CATS[top] ? top : null);
+
+  html = html.replace(
+    /(<nav class="nav" id="nav">)[\s\S]*?(\s*<\/nav>)/,
+    (_m, open, close) => `${open}\n${navLinks(root, active, '      ')}${close}`);
+  html = html.replace(
+    /(<b>欄目<\/b>)[\s\S]*?(\s*<\/div>)/,
+    (_m, open, close) => `${open}\n${footLinks(root, '        ')}${close}`);
+
+  if (html === before) return false;
+  fs.writeFileSync(abs, html);
+  return true;
+}
+
+const navTargets = ['index.html', 'about.html', '_tools/article-template.html'];
+console.log('synced nav —', navTargets.filter(syncNav).length, 'of', navTargets.length, 'shell pages');
+
+fillAuto('index.html', {
+  // 招牌與最新都橫跨三個欄目，沒有單一「看全部」目的地，所以不放 more 連結；
+  // 導覽交給下面的「逛逛欄目」。
+  featured: `  <div class="sec-head"><h2>招牌拆解</h2></div>
+  <div class="grid g3">
+${featured.map(p => homeCard(p, true)).join('\n')}
+  </div>`,
+  latest: `  <div class="sec-head"><h2>最新文章</h2></div>
+  <div class="grid g2">
+${latest.map(p => homeCard(p, false)).join('\n')}
+  </div>`,
+  // 兩個欄目 +「關於我」剛好一排三格
+  cols: `  <div class="sec-head"><h2>逛逛欄目</h2></div>
+  <div class="cols">
+${Object.entries(CATS).map(([slug, c]) =>
+    `    <a class="col-tile" href="${slug}/"><span class="ico">${c.ico}</span><span><b>${esc(c.name)}</b><span>${esc(c.tile)}</span></span></a>`).join('\n')}
+    <a class="col-tile" href="about.html"><span class="ico">👤</span><span><b>關於我</b><span>我是誰，為什麼寫這個站</span></span></a>
+  </div>`,
+});
 
 /* ---------- sitemap.xml + robots.txt（自動產生，頁面增減自動同步） ---------- */
 const ROOT = path.join(__dirname, '..');
 
 // 掃出所有實際存在的文章頁（欄目資料夾底下的 .html，排除 index）
-function findArticles(dir, rel=''){
-  let out=[];
-  for(const e of fs.readdirSync(dir,{withFileTypes:true})){
-    if(e.name.startsWith('_')||e.name.startsWith('.')||e.name==='assets') continue;
-    const p=path.join(dir,e.name), r=rel?rel+'/'+e.name:e.name;
-    if(e.isDirectory()) out=out.concat(findArticles(p,r));
-    else if(e.name.endsWith('.html') && e.name!=='index.html' && r!=='404.html') out.push(r);
+function findArticles(dir, rel = '') {
+  let out = [];
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (e.name.startsWith('_') || e.name.startsWith('.') || e.name === 'assets') continue;
+    const p = path.join(dir, e.name), r = rel ? rel + '/' + e.name : e.name;
+    if (e.isDirectory()) out = out.concat(findArticles(p, r));
+    else if (e.name.endsWith('.html') && e.name !== 'index.html' && r !== '404.html') out.push(r);
   }
   return out;
 }
 
+// 每篇既有文章的導覽列也一起同步（文章是手寫的，但導覽不該手寫）
+const articleFiles = findArticles(ROOT).filter(f => f !== 'about.html' && f !== 'index.html');
+console.log('synced nav —', articleFiles.filter(syncNav).length, 'of', articleFiles.length, 'articles');
+
 const urls = [
-  {loc:BASE_URL+'/', pri:'1.0', freq:'weekly'},
-  {loc:BASE_URL+'/about.html', pri:'0.5', freq:'monthly'},
-  ...Object.keys(CATS).map(s=>({loc:`${BASE_URL}/${s}/`, pri:'0.8', freq:'weekly'})),
-  ...findArticles(ROOT).filter(f=>f!=='about.html').map(f=>({loc:`${BASE_URL}/${f}`, pri:'0.7', freq:'monthly'})),
+  { loc: BASE_URL + '/', pri: '1.0', freq: 'weekly' },
+  { loc: BASE_URL + '/about.html', pri: '0.5', freq: 'monthly' },
+  ...Object.keys(CATS).map(s => ({ loc: `${BASE_URL}/${s}/`, pri: '0.8', freq: 'weekly' })),
+  ...articleFiles.map(f => ({ loc: `${BASE_URL}/${f}`, pri: '0.7', freq: 'monthly' })),
 ];
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(u=>`  <url>
+${urls.map(u => `  <url>
     <loc>${u.loc}</loc>
     <changefreq>${u.freq}</changefreq>
     <priority>${u.pri}</priority>
   </url>`).join('\n')}
 </urlset>
 `;
-fs.writeFileSync(path.join(ROOT,'sitemap.xml'), sitemap);
+fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), sitemap);
 console.log('wrote sitemap.xml —', urls.length, 'URLs');
 
-fs.writeFileSync(path.join(ROOT,'robots.txt'),
-`User-agent: *
+fs.writeFileSync(path.join(ROOT, 'robots.txt'),
+  `User-agent: *
 Allow: /
 
 # 開發工具與草稿不需索引
@@ -328,8 +564,8 @@ ${GTAG}
       連結可能過期、或是我搬過位置。要不要從這幾個地方繼續逛？
     </p>
     <div class="cols" style="max-width:760px;margin:0 auto;text-align:left">
-${NAV.filter(n=>n.slug!=='about').map(n=>
-`      <a class="col-tile" href="${BASE_URL}/${n.href}"><span class="ico">→</span><span><b>${n.label}</b></span></a>`).join('\n')}
+${NAV.filter(n => n.slug !== 'about').map(n =>
+  `      <a class="col-tile" href="${BASE_URL}/${n.href}"><span class="ico">→</span><span><b>${n.label}</b></span></a>`).join('\n')}
     </div>
   </section>
 </main>
@@ -341,5 +577,5 @@ ${NAV.filter(n=>n.slug!=='about').map(n=>
 </body>
 </html>
 `;
-fs.writeFileSync(path.join(ROOT,'404.html'), notFound);
+fs.writeFileSync(path.join(ROOT, '404.html'), notFound);
 console.log('wrote 404.html');

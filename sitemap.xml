@@ -16,27 +16,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.chain-funnel.com/exchange/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.chain-funnel.com/guide/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.chain-funnel.com/column/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.chain-funnel.com/pivot/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.chain-funnel.com/journal/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

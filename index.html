@@ -61,11 +61,7 @@
     <button class="burger" id="burger" aria-label="選單" aria-expanded="false">☰</button>
     <nav class="nav" id="nav">
       <a href="decode/">幣圈拆解</a>
-      <a href="exchange/">交易所指南</a>
-      <a href="guide/">新手教學</a>
-      <a href="column/">觀察專欄</a>
       <a href="pivot/">轉職幣圈</a>
-      <a href="journal/">學習日誌</a>
       <a href="about.html">關於我</a>
     </nav>
     <span class="sp"></span>
@@ -95,68 +91,78 @@
   -->
 </section>
 
-<!-- ===================== 招牌拆解 ===================== -->
+<!-- ===================== 招牌拆解 =====================
+     ⬇️ 以下三段（招牌拆解／最新文章／逛逛欄目）由 _tools/build-pages.js
+        從文章總表自動產生。要改內容請改那支的 POSTS 再重跑，別手改這裡。 -->
 <section class="shell">
-  <div class="sec-head">
-    <h2>招牌拆解</h2>
-    <a class="more" href="decode/">看全部 →</a>
-  </div>
+  <!-- AUTO:featured -->
+  <div class="sec-head"><h2>招牌拆解</h2></div>
   <div class="grid g3">
-    <a class="card feat" href="column/racing/motogp-crypto-sponsorship.html">
-      <div class="kicker">賽車 × 幣圈</div>
-      <h3>加密貨幣為什麼狂贊助賽車？我看到的是賭場的老套路</h3>
-      <p>幣圈幾乎包了整條 F1 的 pit lane。第一眼像有錢任性，看久了我笑不出來——因為這套路，我以前做灰產時天天在用。</p>
+    <a class="card feat" href="column/sponsorship/crypto-sports-sponsorship-2026.html">
+      <div class="kicker">體育贊助</div>
+      <h3>幣圈為什麼不贊助 2026 世界盃了？</h3>
+      <p>世界盃一個交易所 logo 都沒有，同年體育贊助總額卻創新高。錢沒有變少，是換了一個位置。</p>
       <div class="meta">幣圈拆解 · 12 分鐘</div>
     </a>
     <a class="card feat" href="decode/exchange-marketing-playbook.html">
-      <div class="kicker">注意力經濟</div>
+      <div class="kicker">交易所行銷</div>
       <h3>交易所行銷手法全拆解：他們到底在買你的什麼</h3>
       <p>空投、KOL、返佣、聯盟漏斗——把交易所的獲客機器拆開，看每一顆螺絲怎麼轉。</p>
-      <div class="meta">幣圈拆解</div>
+      <div class="meta">幣圈拆解 · 11 分鐘</div>
     </a>
     <a class="card feat" href="pivot/crypto-marketing-jobs.html">
-      <div class="kicker">轉職幣圈</div>
-      <h3>幣圈行銷職缺到底在做什麼？職位全解析</h3>
-      <p>Growth、Community、Content、KOL/BD 的職位地圖與真實薪資區間，一次拆給行銷人看。</p>
-      <div class="meta">轉職幣圈</div>
+      <div class="kicker">職缺地圖</div>
+      <h3>幣圈行銷職缺到底在做什麼？六個職位拆解</h3>
+      <p>職稱都很潮，實際在做什麼？六個常見職位各配一個真實案例，加上薪資區間與門檻。</p>
+      <div class="meta">轉職幣圈 · 11 分鐘</div>
     </a>
   </div>
+<!-- /AUTO:featured -->
 </section>
 
 <!-- ===================== 最新 ===================== -->
 <section class="shell">
-  <div class="sec-head">
-    <h2>最新文章</h2>
-    <a class="more" href="journal/">學習日誌 →</a>
-  </div>
+  <!-- AUTO:latest -->
+  <div class="sec-head"><h2>最新文章</h2></div>
   <div class="grid g2">
-    <a class="card" href="pivot/crypto-marketing-jobs.html">
-      <div class="kicker">轉職幣圈</div>
-      <h3>幣圈行銷職缺有哪些？職位全解析</h3>
-      <p>中英文資料翻遍找不到講清楚的一篇，只好自己整理：職位地圖＋真實薪資區間。</p>
-      <div class="meta">2026 · 轉職幣圈</div>
+    <a class="card" href="column/sponsorship/crypto-sports-sponsorship-2026.html">
+      <div class="kicker">體育贊助</div>
+      <h3>幣圈為什麼不贊助 2026 世界盃了？</h3>
+      <p>世界盃一個交易所 logo 都沒有，同年體育贊助總額卻創新高。錢沒有變少，是換了一個位置。</p>
+      <div class="meta">2026-08-04 · 幣圈拆解</div>
+    </a>
+    <a class="card" href="pivot/why-marketers-pivot-to-crypto.html">
+      <div class="kicker">現象觀察</div>
+      <h3>2026 年還有行銷人想轉職幣圈，原因真的只是錢嗎？</h3>
+      <p>熊市、蒸發近 9 千億美元、還在裁員——這種時候「為了錢」最說不通。那還想進的人在圖什麼？</p>
+      <div class="meta">2026-07-27 · 轉職幣圈</div>
     </a>
     <a class="card" href="decode/exchange-marketing-playbook.html">
-      <div class="kicker">幣圈拆解</div>
-      <h3>交易所行銷手法全拆解</h3>
-      <p>空投、KOL、返佣、聯盟漏斗——看穿每一次「福利」背後的算計。</p>
-      <div class="meta">2026 · 幣圈拆解</div>
+      <div class="kicker">交易所行銷</div>
+      <h3>交易所行銷手法全拆解：他們到底在買你的什麼</h3>
+      <p>空投、KOL、返佣、聯盟漏斗——把交易所的獲客機器拆開，看每一顆螺絲怎麼轉。</p>
+      <div class="meta">2026-07-19 · 幣圈拆解</div>
+    </a>
+    <a class="card" href="pivot/crypto-marketing-jobs.html">
+      <div class="kicker">職缺地圖</div>
+      <h3>幣圈行銷職缺到底在做什麼？六個職位拆解</h3>
+      <p>職稱都很潮，實際在做什麼？六個常見職位各配一個真實案例，加上薪資區間與門檻。</p>
+      <div class="meta">2026-07-18 · 轉職幣圈</div>
     </a>
   </div>
+<!-- /AUTO:latest -->
 </section>
 
 <!-- ===================== 欄目 ===================== -->
 <section class="shell">
+  <!-- AUTO:cols -->
   <div class="sec-head"><h2>逛逛欄目</h2></div>
   <div class="cols">
-    <a class="col-tile" href="decode/"><span class="ico">🧠</span><span><b>幣圈拆解</b><span>行銷視角看加密世界怎麼運作</span></span></a>
-    <a class="col-tile" href="exchange/"><span class="ico">💱</span><span><b>交易所指南</b><span>入金、手續費、實測與比較</span></span></a>
-    <a class="col-tile" href="guide/"><span class="ico">🛠</span><span><b>新手教學</b><span>錢包設定、避雷、DEX 入門</span></span></a>
-    <a class="col-tile" href="column/"><span class="ico">📡</span><span><b>觀察專欄</b><span>賽車 × 幣圈、注意力經濟、韓國</span></span></a>
-    <a class="col-tile" href="pivot/"><span class="ico">🚀</span><span><b>轉職幣圈</b><span>行銷人跨進幣圈的攻略</span></span></a>
-    <a class="col-tile" href="journal/"><span class="ico">📔</span><span><b>學習日誌</b><span>從 0 進幣圈的真實紀錄</span></span></a>
+    <a class="col-tile" href="decode/"><span class="ico">🧠</span><span><b>幣圈拆解</b><span>幣圈怎麼買注意力、又怎麼變現</span></span></a>
+    <a class="col-tile" href="pivot/"><span class="ico">🚀</span><span><b>轉職幣圈</b><span>行銷人跨進幣圈的路線與筆記</span></span></a>
     <a class="col-tile" href="about.html"><span class="ico">👤</span><span><b>關於我</b><span>我是誰，為什麼寫這個站</span></span></a>
   </div>
+<!-- /AUTO:cols -->
 </section>
 
 <!-- ===================== 關於我 ===================== -->
@@ -192,11 +198,7 @@
       <div class="foot-col">
         <b>欄目</b>
         <a href="decode/">幣圈拆解</a>
-        <a href="exchange/">交易所指南</a>
-        <a href="guide/">新手教學</a>
-        <a href="column/">觀察專欄</a>
         <a href="pivot/">轉職幣圈</a>
-        <a href="journal/">學習日誌</a>
       </div>
       <div class="foot-col">
         <b>關於</b>
