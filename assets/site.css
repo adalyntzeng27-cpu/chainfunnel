@@ -280,3 +280,24 @@ footer.site{border-top:1px solid var(--line);margin-top:40px;background:var(--bg
 .foot-legal .social{display:flex;gap:16px}
 .foot-legal .social a:hover{color:var(--accent)}
 @media(max-width:640px){.foot-grid{flex-direction:column;gap:28px}}
+
+/* ------------------------------------------------------------ 表格 · 手機優先
+   窄螢幕下，加了 class="stack" 的表格改為堆疊卡片（每列一張），
+   欄位名靠 td 的 data-label 帶出來，避免橫向捲動把右邊欄位藏起來。
+   沒加 stack 的舊表格維持橫捲，但補一行滑動提示。 */
+@media(max-width:640px){
+  .table-wrap.stack-wrap{overflow-x:visible}
+  .prose table.stack{min-width:0;display:flex;flex-direction:column;font-size:15px}
+  .prose table.stack thead{display:none}
+  .prose table.stack tbody,.prose table.stack tr,.prose table.stack td{display:block;width:auto}
+  .prose table.stack tbody{order:1}
+  .prose table.stack caption{order:2}   /* 說明維持在表格下方，與桌機一致 */
+  .prose table.stack tr{padding:14px 0 16px;border-bottom:1px solid var(--line)}
+  .prose table.stack tr:last-child{border-bottom:0}
+  .prose table.stack td{border:0;padding:6px 14px}
+  .prose table.stack td::before{content:attr(data-label);display:block;font-family:var(--mono);
+    font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:3px}
+  .prose table.stack caption{display:block;padding:12px 14px 14px;border-top:1px solid var(--line-soft)}
+  .table-wrap:not(.stack-wrap)::after{content:"← 左右滑動看完整表格";display:block;
+    font-family:var(--mono);font-size:11px;color:var(--faint);padding:8px 14px 10px}
+}
