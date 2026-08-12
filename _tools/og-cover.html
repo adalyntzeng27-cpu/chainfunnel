@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<title>chainfunnel OG cover 1200×630</title>
+<!--
+  分享預覽圖（Facebook / X / LinkedIn）的版型來源。
+  重出方式：用 headless Chrome 以 1200×630 截圖這一頁，存成 ../assets/og-cover.png
+    chrome --headless --screenshot=assets/og-cover.png --window-size=1200,630 _tools/og-cover.html
+  改 logo 或標語後要記得重出，否則社群平台上還是舊圖。
+-->
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  body{
+    background:
+      radial-gradient(900px 520px at 22% 12%, rgba(46,123,255,.28), transparent 62%),
+      radial-gradient(700px 460px at 88% 92%, rgba(34,199,245,.16), transparent 58%),
+      #080B12;
+    color:#E9EEF7;
+    font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:0 88px;position:relative;
+  }
+  .lockup{display:flex;align-items:center;gap:34px}
+  .lockup .mark{height:190px;filter:drop-shadow(0 0 34px rgba(34,199,245,.5))}
+  .lockup .wm{height:146px}
+  .tag{margin-top:54px;font-size:40px;letter-spacing:-.02em;color:#E9EEF7;line-height:1.4}
+  .tag em{font-style:normal;color:#5EE0FF}
+  .sub{margin-top:18px;font-size:23px;color:#9AA7BD}
+  .url{
+    position:absolute;left:88px;bottom:56px;
+    font:600 20px/1 ui-monospace,"JetBrains Mono",Menlo,monospace;
+    color:#66738C;letter-spacing:.04em;
+  }
+  .edge{position:absolute;left:0;right:0;bottom:0;height:6px;
+    background:linear-gradient(90deg,#5EE0FF,#22C7F5 40%,#2E7BFF)}
+</style></head>
+<body>
+  <div class="lockup">
+    <img class="mark" src="../assets/mark.png" alt="">
+    <img class="wm" src="../assets/wordmark-stack.svg" alt="chainfunnel">
+  </div>
+  <p class="tag">用行銷人的眼睛，<em>拆解幣圈</em></p>
+  <p class="sub">繁體中文的加密行銷觀察站</p>
+  <span class="url">chain-funnel.com</span>
+  <span class="edge"></span>
+</body></html>

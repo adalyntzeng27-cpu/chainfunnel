@@ -1,0 +1,12 @@
+<!-- chainfunnel favicon —— 手寫，改這份之後跑 node _tools/gen-favicon.js 重出 PNG 尺寸。
+     為什麼不直接縮新 logo：原圖是細線＋鏈節＋內部橫線，32px 以下會糊成一團藍。
+     這裡簡化成「藍方塊 + 挖空的透視漏斗」——方塊本身在 16px 就是可辨識的形狀，
+     漏斗沿用新 logo 的橢圓口造型，跟站上的圖案是同一個東西。 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="chainfunnel">
+  <rect width="64" height="64" rx="14" fill="#2E7BFF"/>
+  <g fill="#080B12">
+    <ellipse cx="32" cy="20" rx="18" ry="7"/>
+    <path d="M14 20 L32 47 L50 20 Z"/>
+    <rect x="29" y="45" width="6" height="9" rx="1"/>
+  </g>
+</svg>

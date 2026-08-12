@@ -1,4 +1,14 @@
 /* ============================================================
+   ⛔ 已停用（2026-08-13 換 logo 後）—— 不要跑這支。
+
+   它會用舊的發光點陣 logo 覆寫 assets/favicon-32.png，把現行圖示蓋掉。
+   現行的 logo 流程是三支各司其職：
+     _tools/process-new-logo.js  圖案  → assets/mark.png
+     _tools/gen-wordmark.js      字標  → assets/wordmark*.svg
+     _tools/gen-favicon.js       圖示  → assets/favicon-*.png（來源是 favicon.svg）
+   這支留著只是舊素材的產生紀錄，站上已無任何頁面引用它的輸出。
+
+   ---- 以下為原始說明 ----
    chainfunnel — logo 資產產生器
    來源：_tools/logo.png（透明底原圖）
    輸出：../assets/ 的 logo-mark / logo-full / favicon-128 / favicon-32

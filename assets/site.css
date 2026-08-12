@@ -74,9 +74,11 @@ header.site{
   border-bottom:1px solid var(--line);
 }
 .bar{max-width:var(--maxw);margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:18px}
-.brand{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:19px;letter-spacing:-.02em}
-.brand img{height:30px;width:auto;filter:drop-shadow(0 0 10px color-mix(in srgb,var(--accent) 55%, transparent))}
-.brand b{background:linear-gradient(92deg,var(--accent-3),var(--accent) 45%,var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+/* 品牌鎖定版：圖案 + 字標。字標是 SVG 路徑（不吃系統字體），改字重／字距要重跑 _tools/gen-wordmark.js */
+.brand{display:inline-flex;align-items:center;gap:9px}
+/* 光暈用 --accent-2 而不是青色：圖案本身是電光藍，罩青色光會在邊緣糊一圈 */
+.brand .mark{height:30px;width:auto;filter:drop-shadow(0 0 7px color-mix(in srgb,var(--accent-2) 35%, transparent))}
+.brand .wm{height:18px;width:auto}
 .nav{display:flex;align-items:center;gap:4px;margin-left:6px}
 .nav a{padding:8px 11px;border-radius:9px;font-size:14.5px;color:var(--muted);white-space:nowrap;transition:color .15s,background .15s}
 .nav a:hover{color:var(--ink);background:var(--panel)}
@@ -269,8 +271,10 @@ footer.site{border-top:1px solid var(--line);margin-top:40px;background:var(--bg
 .foot-cta h2{font-size:clamp(22px,3.4vw,28px);margin:0 0 10px;letter-spacing:-.02em}
 .foot-cta p{color:var(--muted);margin:0 0 22px}
 .foot-grid{display:flex;justify-content:space-between;align-items:flex-start;gap:32px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:34px}
-.foot-brand img{height:88px;width:auto;filter:drop-shadow(0 0 16px color-mix(in srgb,var(--accent) 45%,transparent))}
-.foot-brand p{color:var(--faint);font-size:13px;margin:10px 0 0;max-width:260px}
+.foot-brand .lockup{display:inline-flex;align-items:center;gap:16px}
+.foot-brand .mark{height:68px;width:auto;filter:drop-shadow(0 0 14px color-mix(in srgb,var(--accent-2) 32%,transparent))}
+.foot-brand .wm{height:62px;width:auto}
+.foot-brand p{color:var(--faint);font-size:13px;margin:14px 0 0;max-width:260px}
 .foot-links{display:flex;gap:56px;flex-wrap:wrap}
 .foot-col b{display:block;font-size:13px;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;font-family:var(--mono);margin-bottom:12px}
 .foot-col a{display:block;color:var(--muted);font-size:14.5px;padding:5px 0}

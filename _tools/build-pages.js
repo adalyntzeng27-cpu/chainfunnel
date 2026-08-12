@@ -17,7 +17,7 @@ const BASE_URL = 'https://www.chain-funnel.com';
 
 const SITE_NAME = 'chainfunnel';
 const AUTHOR = '華特';
-const OG_IMAGE = BASE_URL + '/assets/logo-full.png';
+const OG_IMAGE = BASE_URL + '/assets/og-cover.png';
 
 /* Google Analytics 4 追蹤碼（gtag.js）。換 GA 資源只改這個 ID。
    注意：手寫頁（index/about/既有文章/article-template）的 gtag 是各自寫死的，
@@ -242,11 +242,25 @@ function navLinks(root, active, indent) {
   }).join('\n');
 }
 
+/* ⭐ 品牌鎖定版的唯一來源。字標是 SVG 路徑（見 _tools/gen-wordmark.js），
+   不吃系統字體。header()／footer()／syncNav() 都從這兩支長出來，
+   換 logo 只要改這裡再重跑。 */
+function brandLink(root) {
+  return `<a class="brand" href="${root}index.html" aria-label="chainfunnel 首頁"`
+    + `><img class="mark" src="${root}assets/mark.png" alt=""`
+    + `><img class="wm" src="${root}assets/wordmark.svg" alt="chainfunnel"></a>`;
+}
+
+function footBrand(root) {
+  return `<span class="lockup"><img class="mark" src="${root}assets/mark.png" alt=""`
+    + `><img class="wm" src="${root}assets/wordmark-stack.svg" alt="chainfunnel"></span>`;
+}
+
 function header(root, active) {
   const subBtn = SUBSCRIBE_ENABLED ? `\n    <a class="btn-sub" href="#subscribe">訂閱</a>` : '';
   return `<header class="site">
   <div class="bar">
-    <a class="brand" href="${root}index.html" aria-label="chainfunnel 首頁"><img src="${root}assets/logo-mark.png" alt=""><b>chainfunnel</b></a>
+    ${brandLink(root)}
     <button class="burger" id="burger" aria-label="選單" aria-expanded="false">☰</button>
     <nav class="nav" id="nav">
 ${navLinks(root, active, '      ')}
@@ -274,7 +288,7 @@ function footer(root) {
   return `<footer class="site">
 ${cta}  <div class="shell foot-grid">
     <div class="foot-brand">
-      <img src="${root}assets/logo-full.png" alt="chainfunnel">
+      ${footBrand(root)}
       <p>用行銷人的眼睛，拆解幣圈。繁體中文的加密觀察站。</p>
     </div>
     <div class="foot-links">
@@ -342,8 +356,9 @@ ${GTAG}
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="${url}">
-<link rel="icon" type="image/png" sizes="128x128" href="../assets/favicon-128.png">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <link rel="stylesheet" href="../assets/site.css">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="${SITE_NAME}">
@@ -442,8 +457,9 @@ function fillAuto(file, blocks) {
 }
 
 /* ⭐ 導覽同步：所有手寫頁（index / about / 每篇文章 / 文章模板）的
-   <nav class="nav" id="nav"> 與頁尾「欄目」清單，一律由 NAV 覆寫。
-   → 以後改欄目不必再逐頁手改導覽列，重跑這支就好。
+   <nav class="nav" id="nav">、頁尾「欄目」清單、以及品牌鎖定版（導覽列 logo
+   與頁尾 logo），一律由 NAV 與 brandLink()／footBrand() 覆寫。
+   → 以後改欄目或換 logo 都不必逐頁手改，重跑這支就好。
    （靠 markup 形狀辨識，不需要 AUTO 標記；改過的舊標記會被自動清掉。） */
 function syncNav(file) {
   const abs = path.join(__dirname, '..', file);
@@ -466,6 +482,11 @@ function syncNav(file) {
   html = html.replace(
     /(<b>欄目<\/b>)[\s\S]*?(\s*<\/div>)/,
     (_m, open, close) => `${open}\n${footLinks(root, '        ')}${close}`);
+  // 品牌鎖定版：導覽列的 <a class="brand"> 與頁尾 .foot-brand 裡的圖，整塊換掉
+  html = html.replace(/<a class="brand"[\s\S]*?<\/a>/, () => brandLink(root));
+  html = html.replace(
+    /(<div class="foot-brand">\s*)[\s\S]*?(\s*<p>)/,
+    (_m, open, close) => `${open}${footBrand(root)}${close}`);
 
   if (html === before) return false;
   fs.writeFileSync(abs, html);
@@ -556,13 +577,14 @@ const notFound = `<!doctype html>
 ${GTAG}
 <title>找不到這一頁 · ${SITE_NAME}</title>
 <meta name="robots" content="noindex">
-<link rel="icon" type="image/png" sizes="128x128" href="${BASE_URL}/assets/favicon-128.png">
+<link rel="icon" type="image/svg+xml" href="${BASE_URL}/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="${BASE_URL}/assets/favicon-32.png">
 <link rel="stylesheet" href="${BASE_URL}/assets/site.css">
 </head>
 <body>
 <header class="site">
   <div class="bar">
-    <a class="brand" href="${BASE_URL}/" aria-label="${SITE_NAME} 首頁"><img src="${BASE_URL}/assets/logo-mark.png" alt=""><b>${SITE_NAME}</b></a>
+    <a class="brand" href="${BASE_URL}/" aria-label="${SITE_NAME} 首頁"><img class="mark" src="${BASE_URL}/assets/mark.png" alt=""><img class="wm" src="${BASE_URL}/assets/wordmark.svg" alt="${SITE_NAME}"></a>
     <span class="sp"></span>
     <a class="btn-sub" href="${BASE_URL}/">回首頁</a>
   </div>
