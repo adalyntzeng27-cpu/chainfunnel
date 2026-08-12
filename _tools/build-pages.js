@@ -358,6 +358,7 @@ ${GTAG}
 <link rel="canonical" href="${url}">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16.png">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <link rel="stylesheet" href="../assets/site.css">
 <meta property="og:type" content="website">
@@ -579,6 +580,7 @@ ${GTAG}
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/svg+xml" href="${BASE_URL}/assets/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="${BASE_URL}/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="${BASE_URL}/assets/favicon-16.png">
 <link rel="stylesheet" href="${BASE_URL}/assets/site.css">
 </head>
 <body>
