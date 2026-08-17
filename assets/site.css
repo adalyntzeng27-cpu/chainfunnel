@@ -252,6 +252,24 @@ section{padding:44px 0}
 .prose td.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 .prose caption{caption-side:bottom;font-family:var(--mono);font-size:12px;color:var(--faint);padding:10px 14px;text-align:left}
 
+/* 淺色底表格：想讓對照表從深色版面跳出來時，在外層加 class="light"
+   （例：<div class="table-wrap stack-wrap light">）。只影響表格本身，其餘版面不變。 */
+.prose .table-wrap.light{
+  --t-bg:#FFFFFF; --t-head:#EEF2F8; --t-ink:#111827; --t-faint:#5B6678;
+  --t-line:#D7DEE9; --t-line-soft:#E7ECF3;
+  background:var(--t-bg);border:2px solid var(--accent-2);
+  box-shadow:0 0 18px color-mix(in srgb,var(--accent-2) 22%,transparent)}
+.prose .table-wrap.light th{background:var(--t-head);color:var(--t-faint);border-bottom-color:var(--t-line)}
+.prose .table-wrap.light td{color:var(--t-ink);border-bottom-color:var(--t-line-soft)}
+.prose .table-wrap.light caption{color:var(--t-faint);background:var(--t-head);border-top:1px solid var(--t-line)}
+.prose .table-wrap.light a{color:#1D4ED8;text-decoration-color:#9DB4E8}
+.prose .table-wrap.light a:hover{color:#1436A4;text-decoration-color:#1436A4}
+@media(max-width:640px){
+  .prose .table-wrap.light table.stack tr{border-bottom-color:var(--t-line)}
+  .prose .table-wrap.light table.stack td::before{color:var(--t-faint)}
+  .prose .table-wrap.light table.stack caption{border-top-color:var(--t-line)}
+}
+
 /* 待補圖片/表格佔位（只在草稿預覽看得到，正式出稿前要換成真內容） */
 .prose .media-todo{margin:30px 0;padding:18px 20px;border:1.5px dashed var(--accent);border-radius:var(--r);background:var(--accent-soft)}
 .prose .media-todo b{display:block;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}

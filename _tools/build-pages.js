@@ -194,10 +194,14 @@ const POSTS = [
     date: '2026-07-18', read: '11 分鐘',
   },
   {
-    cat: 'pivot', soon: true,
+    cat: 'pivot',
+    href: 'pivot/crypto-marketing-portfolio.html',
     kicker: '作品集',
-    title: '零經驗怎麼建幣圈作品集？我的三個月計畫',
-    dek: '自架網站、實測交易所、參與 DAO——把「沒經驗」變成「有作品」的具體路線。',
+    title: '2026 零經驗怎麼建幣圈作品集？公開資料就是你的原料',
+    dek: '傳統行銷最漂亮的戰績鎖在保密條款底下，攤到履歷上只剩無法查證的自述。幣圈的行銷動作卻幾乎都能被還原——這個落差，是沒經驗的人少數能自己動手的地方。',
+    cardTitle: '零經驗怎麼建幣圈作品集？',
+    cardDek: '傳統行銷的戰績鎖在 NDA 裡，幣圈的行銷動作攤在鏈上。原料哪裡找、六個職位各要什麼證據。',
+    date: '2026-08-17', read: '10 分鐘',
   },
   {
     cat: 'pivot', soon: true,
